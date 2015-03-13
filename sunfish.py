@@ -7,7 +7,7 @@ from itertools import count
 from collections import Counter, OrderedDict, namedtuple
 
 # The table size is the maximum number of elements in the transposition table.
-TABLE_SIZE = 1e6
+TABLE_SIZE = 5e6
 
 # This constant controls how much time we spend on looking for optimal moves.
 NODES_SEARCHED = 1e4
@@ -361,7 +361,14 @@ def main():
         # We query the user until she enters a legal move.
         move = None
         while move not in pos.genMoves():
-            crdn = input("Your move: ")
+            crdn = ""
+            while crdn == "":
+                try:
+                    test = open("input", 'r')
+                    crdn = test.read()
+                    test.close()
+                except:
+                    pass
             try:
               move = parse(crdn[0:2]), parse(crdn[2:4])
             except ValueError:
@@ -375,16 +382,19 @@ def main():
 
         # Fire up the engine to look for a move.
         move, score = search(pos)
-        if score <= -MATE_VALUE:
-            print("You won")
-            break
-        if score >= MATE_VALUE:
-            print("You lost")
-            break
+
+#        if score <= -MATE_VALUE:
+#            print("You won")
+#            break
+#        if score >= MATE_VALUE:
+#            print("You lost")
+#            break
 
         # The black player moves from a rotated position, so we have to
         # 'back rotate' the move before printing it.
-        print("My move:", render(119-move[0]) + render(119-move[1]))
+        save = open('output', 'w')
+        save.write(str(render(119-move[0]) + render(119-move[1])))
+        save.close()
         pos = pos.move(move)
 
 
